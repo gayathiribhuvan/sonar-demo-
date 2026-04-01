@@ -5,11 +5,13 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('My Sonar Server') {
+                withCredentials([string(credentialsId: 'sonar-token', variable: 'SONAR_TOKEN')]) {
                     sh '''
                     /opt/sonar-scanner/bin/sonar-scanner \
                     -Dsonar.projectKey=my-project \
-                    -Dsonar.sources=.
+                    -Dsonar.sources=. \
+                    -Dsonar.host.url=http://localhost:9000 \
+                    -Dsonar.login=$SONAR_TOKEN
                     '''
                 }
             }
