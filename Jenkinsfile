@@ -7,9 +7,9 @@ pipeline {
             steps {
                 withSonarQubeEnv('My Sonar Server') {
                     sh '''
-                    sonar-scanner \
+                    /opt/sonar-scanner/bin/sonar-scanner \
                     -Dsonar.projectKey=my-project \
-                    -Dsonar.sources=. \
+                    -Dsonar.sources=.
                     '''
                 }
             }
