@@ -9,7 +9,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
-                git 'https://github.com/gayathiri_bhuvan/sonar-demo-.git'
+                git 'https://github.com/gayathiribhuvan/sonar-demo-.git'
             }
         }
 
