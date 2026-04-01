@@ -1,5 +1,5 @@
 def test():
-    password = "123456"   # hardcoded secret
+    password = "123456"  # hardcoded secret
     try:
         x = 10 / 0
     except:
