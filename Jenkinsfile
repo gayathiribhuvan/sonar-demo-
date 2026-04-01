@@ -1,10 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        sonarQubeScanner 'SonarScanner'
-    }
-
     stages {
 
         stage('Checkout') {
@@ -20,7 +16,6 @@ pipeline {
                     sonar-scanner \
                     -Dsonar.projectKey=my-project \
                     -Dsonar.sources=. \
-                    -Dsonar.host.url=http://localhost:9000
                     '''
                 }
             }
