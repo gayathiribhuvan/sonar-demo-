@@ -1,6 +1,6 @@
-def test():
-    password = "123456"  # hardcoded secret
-    try:
-        x = 10 / 0
-    except:
-        pass   # empty catch block
+password = "my-secret-api-key"  # security issue
+
+try:
+    x = 1/0
+except:
+    pass  # bad practice (code smell)
