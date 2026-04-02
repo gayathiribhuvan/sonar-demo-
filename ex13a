@@ -1,6 +1,7 @@
-def login():
-    password = "123456"   # hardcoded secret (security issue)
-    try:
-        pass
-    except:
-        pass  # empty catch block (code smell)
+import os
+
+def insecure():
+    eval("print('hack')")   # 🔴 SECURITY vulnerability
+
+def bad():
+    x = 1/0   # 🔴 BUG (division by zero)
