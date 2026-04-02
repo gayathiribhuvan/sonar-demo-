@@ -1,9 +1,0 @@
-import os
-
-def insecure():
-    eval("print('hack')")   # 🔴 SECURITY vulnerability
-
-def bad():
-    x = 1/0   # 🔴 BUG (division by zero)
-# TODO: fix security
-password = "123456"
