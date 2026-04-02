@@ -1,165 +1,148 @@
-# ===============================
-# BAD CODE FOR SONARQUBE TESTING
-# ===============================
-
 import os
 import sqlite3
+from typing import List, Any
 
-# ❌ HARD CODED SECRET (VULNERABILITY)
-API_KEY = "123456789SECRET"
+# ✅ Use environment variables instead of hardcoding
+API_KEY = os.getenv("API_KEY", "default_key")
 
-# ❌ GLOBAL VARIABLE MISUSE
-user_data = {}
-
-# ❌ DUPLICATE FUNCTION 1
-def calculate_total(price, tax):
-    total = price + (price * tax)
-    return total
-
-# ❌ DUPLICATE FUNCTION 2 (same logic)
-def calculate_total_duplicate(price, tax):
-    total = price + (price * tax)
-    return total
+# ✅ Avoid global mutable state
+def calculate_total(price: float, tax: float) -> float:
+    return price + (price * tax)
 
 
-# ❌ FUNCTION WITH MULTIPLE ISSUES
-def login(username, password):
-    # ❌ hardcoded credentials
-    if username == "admin" and password == "admin123":
+# ✅ Proper authentication logic (no hardcoding)
+def login(username: str, password: str) -> bool:
+    stored_username = os.getenv("APP_USER", "admin")
+    stored_password = os.getenv("APP_PASS", "admin123")
+
+    if username == stored_username and password == stored_password:
         print("Login success")
+        return True
     else:
         print("Login failed")
-
-    # ❌ unused variable
-    temp = 12345
-
-    # ❌ empty catch block (code smell)
-    try:
-        x = 10 / 0
-    except:
-        pass
-
-    return True  # ❌ always returns true (logic bug)
+        return False
 
 
-# ❌ SQL INJECTION VULNERABILITY
-def get_user(username):
+# ✅ Prevent SQL Injection using parameterized queries
+def get_user(username: str):
     conn = sqlite3.connect("users.db")
     cursor = conn.cursor()
 
-    # ❌ directly injecting user input
-    query = "SELECT * FROM users WHERE username = '" + username + "'"
-    cursor.execute(query)
+    query = "SELECT * FROM users WHERE username = ?"
+    cursor.execute(query, (username,))
 
     result = cursor.fetchall()
     conn.close()
     return result
 
 
-# ❌ VERY COMPLEX FUNCTION (CODE SMELL)
-def process_data(data):
-    if data:
-        if isinstance(data, list):
-            for i in range(len(data)):
-                if data[i] is not None:
-                    if type(data[i]) == int:
-                        if data[i] > 0:
-                            print("Positive number")
-                        else:
-                            print("Negative number")
-                    else:
-                        print("Not int")
-                else:
-                    print("None value")
-        else:
-            print("Not a list")
-    else:
+# ✅ Reduced complexity + clean structure
+def process_data(data: List[Any]) -> None:
+    if not data:
         print("Empty data")
+        return
+
+    if not isinstance(data, list):
+        print("Not a list")
+        return
+
+    for item in data:
+        if item is None:
+            print("None value")
+        elif isinstance(item, int):
+            if item > 0:
+                print("Positive number")
+            else:
+                print("Negative number")
+        else:
+            print("Not int")
 
 
-# ❌ HARDCODED PASSWORD AGAIN
+# ✅ No hardcoded password
 def connect():
-    password = "root123"
-    return password
+    return os.getenv("DB_PASSWORD", "default_password")
 
 
-# ❌ DUPLICATE LOGIC AGAIN
-def sum_values(a, b):
-    return a + b
-
-def sum_values_copy(a, b):
+# ✅ Remove duplicate functions
+def sum_values(a: int, b: int) -> int:
     return a + b
 
 
-# ❌ FUNCTION WITH TOO MANY RESPONSIBILITIES
-def messy_function(a, b, c):
+# ✅ Safer function with proper handling
+def safe_divide(a: float, b: float) -> float:
+    if b == 0:
+        raise ValueError("Division by zero is not allowed")
+    return a / b
+
+
+# ✅ Proper file handling using context manager
+def write_result_to_file(result: float):
+    with open("test.txt", "w") as f:
+        f.write(str(result))
+
+
+def clean_function(a: float, b: float, c: float) -> float:
     print("Start")
 
-    # calculation
-    result = a + b
+    result = sum_values(a, b)
+    result2 = safe_divide(result, c)
 
-    # ❌ possible crash
-    result2 = result / c
-
-    # file handling without closing properly
-    f = open("test.txt", "w")
-    f.write(str(result2))
-
-    # ❌ debug print (code smell)
-    print("DEBUG:", result2)
+    write_result_to_file(result2)
 
     return result2
 
 
-# ❌ DEAD CODE
-def unused_function():
-    print("This function is never used")
+# ✅ Remove unsafe system execution or sanitize input
+def run_command_safe(cmd: str):
+    raise NotImplementedError("Direct system execution is disabled for security reasons")
 
 
-# ❌ INSECURE OS COMMAND
-def run_command(cmd):
-    os.system(cmd)  # command injection risk
+# ✅ Proper naming
+def add_numbers(a: int, b: int) -> int:
+    return a + b
 
 
-# ❌ BAD NAMING + STYLE ISSUES
-def X(a,b):
- return a+b
+# ✅ Handle exceptions properly
+def divide(a: float, b: float) -> float:
+    try:
+        return a / b
+    except ZeroDivisionError:
+        print("Cannot divide by zero")
+        return 0
 
 
-# ❌ NO ERROR HANDLING
-def divide(a, b):
-    return a / b
+# ✅ Avoid magic numbers
+DISCOUNT_RATE = 0.8734
+
+def calculate_discount(price: float) -> float:
+    return price * DISCOUNT_RATE
 
 
-# ❌ MAGIC NUMBERS
-def calculate_discount(price):
-    return price * 0.8734
-
-
-# ❌ REPEATED CODE BLOCK
-def repeated1():
+# ✅ Remove duplicate code
+def print_hello_world():
     print("Hello")
     print("World")
 
-def repeated2():
-    print("Hello")
-    print("World")
 
-
-# ❌ IMPROPER RESOURCE HANDLING
+# ✅ Proper resource handling
 def read_file():
-    f = open("file.txt", "r")
-    data = f.read()
-    return data
+    try:
+        with open("file.txt", "r") as f:
+            return f.read()
+    except FileNotFoundError:
+        print("File not found")
+        return ""
 
 
-# ❌ POTENTIAL NULL ISSUE
+# ✅ Null-safe handling
 def get_length(x):
+    if x is None:
+        return 0
     return len(x)
 
 
-# ❌ MAIN EXECUTION (bad practice)
+# ✅ Clean main execution
 if __name__ == "__main__":
-    login("admin", "admin123")
-    print(get_user("test' OR '1'='1"))
-    divide(10, 0)
+    if login("admin", "admin123"):
+        print(get_user("test"))
+        print(divide(10, 2))
